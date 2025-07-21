@@ -1,15 +1,15 @@
 # Credential Verifier SDK
 
-A decoupled, protocol-agnostic Verifier SDK for digital credentials. This SDK uses self-describing handlers, pluggable protocol adapters, and post-verification policy modules for flexible, modern credential verification.
+A decoupled, protocol-agnostic Verifier SDK for digital credentials. This SDK uses modular handlers, pluggable protocol adapters, and post-verification policy modules for flexible, modern credential verification.
 
 ---
 
 ## 🏗️ Architecture Overview
 
-- **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, and mDL (mobile driver’s license).
-- **Handlers:** Self-describing modules for each credential format (W3C, mDL).
+- **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, SD-JWT, and mDL (mobile driver’s license).
+- **Handlers:** Modular handlers for each credential format (W3C, mDL, SD-JWT).
 - **Protocol Adapters:** Pluggable adapters for OID4VP, DIDComm, CHAPI, WACI, SIOP, and VC-API.
-- **Policies:** Post-verification business rules (e.g., age, expiration).
+- **Policies:** Post-verification business rules (e.g., age, validity, EUDI).
 - **TypeScript Interfaces:** Strongly-typed, extensible SDK contracts.
 
 ---
@@ -18,29 +18,22 @@ A decoupled, protocol-agnostic Verifier SDK for digital credentials. This SDK us
 
 All crypto suites are in `src/crypto/` and exported from the main entry point:
 
-- **Ed25519** (`ed25519Suite`): W3C Data Integrity, Ed25519 signatures
+- **Ed25519** (`ed25519Suite`): W3C Data Integrity, Ed25519 signatures (mocked)
 - **JWS** (`jwsSuite`): W3C JWS (JsonWebSignature2020)
-- **ECDSA secp256r1** (`ecdsaR1Suite`): W3C Data Integrity
-- **ECDSA secp256k1** (`ecdsaR2Suite`): W3C Data Integrity
-- **BBS+** (`bbsSuite`): W3C Data Integrity, selective disclosure
+- **ECDSA secp256r1** (`ecdsaR1Suite`)
+- **ECDSA secp256k1** (`ecdsaR2Suite`)
+- **BBS+** (`bbsSuite`)
 - **mDoc** (`mdocDeviceAuthSuite`): Mobile Driver’s License (ISO 18013-5)
 
 ---
 
 ## 🧩 Handlers
 
-Handlers are self-describing modules that encapsulate format-specific logic:
+Handlers encapsulate format-specific logic:
 
-- **W3cHandler:** For W3C Verifiable Credentials and Presentations
-- **MdlHandler:** For Mobile Driver’s License (mDL) credentials
-
-Each handler implements:
-```typescript
-interface CredentialHandler {
-  canHandle(presentation: VerifiablePresentation): boolean;
-  verify(presentation: VerifiablePresentation, request?: PresentationRequest): Promise<VerificationResult>;
-}
-```
+- **W3cHandler:** For W3C Verifiable Credentials and Presentations (`src/handlers/w3c-handler.ts`)
+- **MdlHandler:** For Mobile Driver’s License (mDL) credentials (`src/handlers/mdl-handler.ts`)
+- **SdJwtHandler:** For Selective Disclosure JWT credentials (`src/handlers/sd-jwt-handler.ts`)
 
 ---
 
@@ -48,12 +41,12 @@ interface CredentialHandler {
 
 Adapters in `src/protocol-adapters/` make the SDK protocol-agnostic:
 
-- **OID4VP** (`OID4VP_Adapter`): OpenID for Verifiable Presentations
-- **DIDComm** (`DIDCommAdapter`): Decentralized messaging
-- **CHAPI** (`CHAPIAdapter`): Browser-based credential exchange
-- **WACI** (`WACIAdapter`): Wallet and Credential Interactions
-- **SIOP** (`SIOPAdapter`): Self-Issued OpenID Provider
-- **VC-API** (`VCAPIAdapter`): W3C REST API
+- **OID4VP** (`oid4vp-adapter.ts`)
+- **DIDComm** (`didcomm-adapter.ts`)
+- **CHAPI** (`chapi-adapter.ts`)
+- **WACI** (`waci-adapter.ts`)
+- **SIOP** (`siop-adapter.ts`)
+- **VC-API** (`vc-api-adapter.ts`)
 
 All adapters implement a common interface for receiving and responding to credential requests.
 
@@ -63,8 +56,9 @@ All adapters implement a common interface for receiving and responding to creden
 
 Policies are post-verification business rules:
 
-- **AgeVerificationPolicy:** Age/ARF compliance
-- **ValidityPolicy:** Expiration and validity
+- **AgeVerificationPolicy:** Age/ARF compliance (`src/policies/age-policy.ts`)
+- **ValidityPolicy:** Expiration and validity (`src/policies/validity-policy.ts`)
+- **EudiPolicy:** EUDI credential compliance (`src/policies/eudi-policy.ts`)
 
 ---
 
@@ -91,38 +85,58 @@ export interface CredentialHolderWallet {
 
 ---
 
-## 🚀 Usage Example
+## 🚀 Usage Examples
+
+### W3C + EUDI + Age Verification
 
 ```typescript
-import { createVerifier } from './src/core/index';
-import { W3cHandler } from './src/handlers/w3c-credential';
-import { MdlHandler } from './src/handlers/mobile-license';
-import { AgeVerificationPolicy, ValidityPolicy } from './src/policies';
+import { createVerifier } from '../src/core/index.ts';
+import { W3cHandler } from '../src/handlers/w3c-handler.ts';
+import { EudiPolicy, AgeVerificationPolicy } from '../src/policies/index.ts';
+import { VerifiablePresentation } from '../src/types/index.ts';
 
-// Create handlers
 const w3cHandler = new W3cHandler();
-const mdlHandler = new MdlHandler();
-
-// Create policies
-const agePolicy = new AgeVerificationPolicy();
-const validityPolicy = new ValidityPolicy();
-
-// Create verifier
 const verifier = createVerifier({
-  handlers: [w3cHandler, mdlHandler],
+  handlers: [w3cHandler],
   policies: {
-    'age_verification': agePolicy,
-    'validity': validityPolicy
+    'eudi': new EudiPolicy(),
+    'age_verification': new AgeVerificationPolicy()
   }
 });
 
-// Example verification (see examples/simple-usage.ts for full code)
-const result = await verifier.verify(presentation, {
-  id: 'request-1',
-  policies: ['age_verification', 'validity'],
-  request_credentials: [{ type: 'VerifiableCredential', required: true }],
-  challenge: 'challenge-123'
+const eudiCredential: VerifiablePresentation = { /* ...see examples/w3c-eudi-age-example.ts... */ };
+
+const result = await verifier.verify(eudiCredential, {
+  id: 'eudi-request',
+  policies: ['eudi', 'age_verification'],
+  request_credentials: [{ type: 'EuropeanDigitalIdentityCredential', required: true }],
+  challenge: 'eudi-challenge'
 });
+console.log('EUDI + Age Verification Result:', result);
+```
+
+### mDL + Validity
+
+```typescript
+import { createVerifier } from '../src/core/index.ts';
+import { MdlHandler, MdlPresentation } from '../src/handlers/mdl-handler.ts';
+import { ValidityPolicy } from '../src/policies/index.ts';
+
+const mdlHandler = new MdlHandler();
+const verifier = createVerifier({
+  handlers: [mdlHandler],
+  policies: { 'validity': new ValidityPolicy() }
+});
+
+const mdlCredential: MdlPresentation = { /* ...see examples/mdl-validity-example.ts... */ };
+
+const result = await verifier.verify(mdlCredential as any, {
+  id: 'mdl-validity-request',
+  policies: ['validity'],
+  request_credentials: [{ type: 'mDL', required: true }],
+  challenge: 'mdl-validity-challenge'
+});
+console.log('mDL + Validity Result:', result);
 ```
 
 ---
@@ -133,13 +147,14 @@ const result = await verifier.verify(presentation, {
 credential-verifier-sdk/
 ├── src/
 │   ├── core/                  # Verifier implementation & factories
-│   ├── crypto/                # Crypto suites (Ed25519, JWS, ECDSA, BBS+, mDoc)
-│   ├── handlers/              # Credential handlers (W3C, mDL)
-│   ├── policies/              # Policy modules (age, validity)
-│   ├── protocol-adapters/     # Protocol adapters (OID4VP, DIDComm, etc)
+│   ├── crypto/                # Crypto suites
+│   ├── handlers/              # Credential handlers
+│   ├── policies/              # Policy modules
+│   ├── protocol-adapters/     # Protocol adapters
 │   └── types/                 # TypeScript interfaces
 ├── examples/
-│   └── simple-usage.ts        # Usage example
+│   ├── w3c-eudi-age-example.ts
+│   └── mdl-validity-example.ts
 ├── index.ts                   # Main entry point
 ├── package.json
 └── README.md
