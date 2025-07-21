@@ -6,20 +6,21 @@ A decoupled, protocol-agnostic Verifier SDK for digital credentials. This SDK us
 
 ## 🚀 Example Usage
 
-You can run three example scripts using npm:
+You can run four example scripts using npm:
 
 ```sh
 npm run example:mdl-validity    # mDL + Validity example
 npm run example:w3c-eudi        # W3C EUDI + Over18 example
 npm run example:w3c-over18      # W3C + Over18 example
+npm run example:sd-jwt          # SD-JWT example
 ```
 
 ---
 
 ## 🏗️ Architecture Overview
 
-- **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, and mDL (mobile driver’s license).
-- **Handlers:** Modular handlers for each credential format (W3C, mDL).
+- **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, SD-JWT, and mDL (mobile driver’s license).
+- **Handlers:** Modular handlers for each credential format (W3C, mDL, SD-JWT).
 - **Protocol Adapters:** Pluggable adapters for OID4VP, DIDComm, CHAPI, WACI, SIOP, and VC-API.
 - **Policies:** Post-verification business rules (e.g., age, validity, EUDI).
 - **TypeScript Interfaces:** Strongly-typed, extensible SDK contracts.
@@ -32,15 +33,16 @@ npm run example:w3c-over18      # W3C + Over18 example
 credential-verifier-sdk/
 ├── src/
 │   ├── core/                  # Verifier implementation & factories
-│   ├── crypto/                # Crypto suites (Ed25519, JWS, ECDSA, BBS+, mDoc)
-│   ├── handlers/              # Credential handlers (W3C, mDL)
+│   ├── crypto/                # Crypto suites (Ed25519, JWS, ECDSA, BBS+, mDoc, SD-JWT)
+│   ├── handlers/              # Credential handlers (W3C, mDL, SD-JWT)
 │   ├── policies/              # Policy modules (age, validity, over18, eudi)
 │   ├── protocol-adapters/     # Protocol adapters (OID4VP, DIDComm, etc)
 │   └── types/                 # TypeScript interfaces
 ├── examples/
 │   ├── mdl-validity-example.ts        # mDL + Validity example
 │   ├── w3c-eudi-over18-example.ts     # W3C EUDI + Over18 example
-│   └── w3c-over18-example.ts          # W3C + Over18 example
+│   ├── w3c-over18-example.ts          # W3C + Over18 example
+│   └── sd-jwt-example.ts              # SD-JWT example
 ├── index.ts                   # Main entry point
 ├── package.json
 └── README.md
@@ -54,6 +56,7 @@ Handlers encapsulate format-specific logic:
 
 - **W3cHandler:** For W3C Verifiable Credentials and Presentations (`src/handlers/w3c-handler.ts`)
 - **MdlHandler:** For Mobile Driver’s License (mDL) credentials (`src/handlers/mdl-handler.ts`)
+- **SdJwtHandler:** For SD-JWT credentials and presentations (`src/handlers/sd-jwt-handler.ts`)
 
 ---
 

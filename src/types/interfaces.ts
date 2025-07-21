@@ -6,7 +6,8 @@ export interface Proof {
   created: string;
   verificationMethod: string;
   proofPurpose: string;
-  proofValue: string;
+  proofValue?: string;
+  [key: string]: any; // Allow custom properties like sdJwt
 }
 
 export interface CredentialSubject {
