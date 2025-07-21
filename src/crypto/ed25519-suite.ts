@@ -24,18 +24,5 @@ export const ed25519Suite = {
     // Always pass for mock/testing
     console.log(`   Verification result: VALID (mock)`);
     return true;
-  },
-
-  /**
-   * Creates a new Ed25519 key pair
-   * @returns Promise<Object> - Object containing public and private keys
-   */
-  generateKeyPair: async (): Promise<{ publicKey: string; privateKey: string }> => {
-    console.log("--> Generating Ed25519 key pair...");
-    // In a real implementation, this would use a proper crypto library
-    return {
-      publicKey: "did:example:123#key-1",
-      privateKey: "private-key-data"
-    };
   }
 }; 
