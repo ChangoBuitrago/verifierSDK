@@ -1,17 +1,39 @@
 {
   "name": "credential-verifier-sdk",
   "version": "1.0.0",
-  "description": "A decoupled, agnostic Verifier SDK with pluggable handlers",
-  "main": "index.js",
+  "description": "A decoupled, protocol-agnostic Verifier SDK for digital credentials with pluggable handlers, adapters, and policy modules.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "test": "echo \"No tests yet\"",
+    "example:w3c": "ts-node --esm examples/w3c-eudi-age-example.ts",
+    "example:mdl": "ts-node --esm examples/mdl-validity-example.ts"
   },
-  "keywords": ["verifiable-credentials", "sdk", "verifier", "w3c", "mdl"],
+  "keywords": [
+    "verifiable-credentials",
+    "sdk",
+    "verifier",
+    "w3c",
+    "mdl",
+    "ssi",
+    "eudi"
+  ],
   "author": "Your Name",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChangoBuitrago/verifierSDK.git"
+  },
   "devDependencies": {
     "typescript": "^5.0.0",
     "ts-node": "^10.9.0",
