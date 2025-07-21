@@ -1,6 +1,12 @@
 // src/types/interfaces.ts
 
+// =========================
 // 1. Core Data Structures
+// =========================
+
+/**
+ * Represents a cryptographic proof attached to a credential or presentation.
+ */
 export interface Proof {
   type: string;
   created: string;
@@ -10,17 +16,26 @@ export interface Proof {
   [key: string]: any; // Allow custom properties like sdJwt
 }
 
+/**
+ * Represents the subject of a credential (the entity the credential is about).
+ */
 export interface CredentialSubject {
   id: string; // Holder's DID
   [key: string]: any;
 }
 
+/**
+ * Represents the status/revocation information for a credential.
+ */
 export interface CredentialStatus {
   id: string; // URL or DID for the status list or registry
   type: string; // e.g., "StatusList2021", "BitstringStatusList", "TokenStatusList"
   [key: string]: any; // Allow for mechanism-specific fields
 }
 
+/**
+ * Represents a W3C Verifiable Credential.
+ */
 export interface VerifiableCredential {
   '@context': string[];
   id: string;
@@ -29,9 +44,12 @@ export interface VerifiableCredential {
   issuanceDate: string;
   credentialSubject: CredentialSubject;
   proof: Proof;
-  status?: CredentialStatus; // Use the new type here
+  status?: CredentialStatus;
 }
 
+/**
+ * Represents a W3C Verifiable Presentation (a collection of credentials shared by a holder).
+ */
 export interface VerifiablePresentation {
   '@context': string[];
   type: string[];
@@ -40,10 +58,12 @@ export interface VerifiablePresentation {
   proof: Proof;
 }
 
-
+// =========================
 // 2. Flow-Specific Data Structures
+// =========================
+
 /**
- * Represents the "Presentation Request" sent by a Verifier to a Holder.
+ * Represents a request for a verifiable presentation sent by a verifier to a holder.
  */
 export interface PresentationRequest {
   id: string;
@@ -58,15 +78,7 @@ export interface PresentationRequest {
 }
 
 /**
- * Represents the "Credential Request" sent by a Holder to an Issuer.
- */
-export interface CredentialRequest {
-  type: string[];
-  credentialSubject: CredentialSubject;
-}
-
-/**
- * Represents the final result of a verification check.
+ * Represents the result of a verification process.
  */
 export interface VerificationResult {
   status: 'verified' | 'rejected';
@@ -75,7 +87,7 @@ export interface VerificationResult {
 }
 
 /**
- * Represents the result of a policy execution
+ * Represents the result of a policy execution.
  */
 export interface PolicyResult {
   compliant: boolean;
@@ -84,14 +96,14 @@ export interface PolicyResult {
 }
 
 /**
- * Policy interface that all policies must implement
+ * Interface for a policy module that evaluates business rules after cryptographic verification.
  */
 export interface Policy {
   execute(verificationData: VerificationData): PolicyResult;
 }
 
 /**
- * Data passed to policies for evaluation
+ * Data passed to policies for evaluation.
  */
 export interface VerificationData {
   claims: Record<string, any>;
@@ -102,7 +114,7 @@ export interface VerificationData {
 }
 
 /**
- * Handler interface for different credential formats
+ * Interface for a handler that processes a specific credential format.
  */
 export interface CredentialHandler {
   canHandle(presentation: VerifiablePresentation): boolean;
@@ -116,45 +128,71 @@ export interface CredentialHandler {
   }>;
 }
 
-// Status checking interfaces
+// =========================
+// 3. Status Checking Interfaces
+// =========================
+
+/**
+ * Result of a credential status check (e.g., revocation, suspension).
+ */
 export interface StatusResult {
   active: boolean; // true if not revoked/suspended
   reason?: string;
 }
 
+/**
+ * Interface for a pluggable status checker (e.g., StatusList2021, Bitstring, Token).
+ */
 export interface StatusChecker {
   checkStatus(credential: VerifiableCredential): Promise<StatusResult>;
-  canHandle?(credential: VerifiableCredential): boolean; // Optional for composite
+  canHandle?(credential: VerifiableCredential): boolean; // Optional for multi-mechanism checkers
 }
 
-// 3. Core Actor SDK Interfaces
+// =========================
+// 4. Verifier Interfaces & Options
+// =========================
+
+/**
+ * Interface for a credential verifier (main SDK entry point).
+ */
 export interface CredentialVerifier {
   createRequest(options: { comment: string }): PresentationRequest;
   verify(vp: VerifiablePresentation, request?: PresentationRequest): Promise<VerificationResult>;
   getHandlerInfo?(): Record<string, any>;
 }
 
-// Dependency types for DID resolution, logging, and schema registry
-export interface DidResolver {
-  resolve(did: string): Promise<any>;
-}
-export interface Logger {
-  log(...args: any[]): void;
-  error(...args: any[]): void;
-}
-export interface SchemaRegistry {
-  getSchema(type: string): Promise<any>;
-}
-
-// 4. SDK Factory Patterns & Options
-
 /**
- * Configuration for creating a Verifier instance.
- * Note: Dependencies like the didResolver are injected into the handlers, not the core verifier.
+ * Options for creating a credential verifier instance.
  */
 export interface CredentialVerifierOptions {
   handlers: CredentialHandler[];
   policies?: Record<string, Policy>;
+}
+
+// =========================
+// 5. Dependency Injection Types
+// =========================
+
+/**
+ * Interface for a DID resolver dependency.
+ */
+export interface DidResolver {
+  resolve(did: string): Promise<any>;
+}
+
+/**
+ * Interface for a logger dependency.
+ */
+export interface Logger {
+  log(...args: any[]): void;
+  error(...args: any[]): void;
+}
+
+/**
+ * Interface for a schema registry dependency.
+ */
+export interface SchemaRegistry {
+  getSchema(type: string): Promise<any>;
 }
 
  
