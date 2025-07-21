@@ -3,8 +3,8 @@
  * Self-contained handler for W3C verifiable presentations
  */
 
-import { ed25519Suite, Ed25519Proof } from '../crypto/ed25519-suite';
-import { VerifiablePresentation, PresentationRequest, VerificationResult, VerifiableCredential } from '../types';
+import { ed25519Suite, Ed25519Proof } from '../crypto/ed25519-suite.ts';
+import { VerifiablePresentation, PresentationRequest, VerificationResult, VerifiableCredential } from '../types/index.ts';
 
 export interface W3cHandlerOptions {
   supportedProofTypes?: string[];

@@ -3,8 +3,8 @@
  * Self-contained handler for mDL verifiable presentations
  */
 
-import { mdocDeviceAuthSuite, DeviceAuth, ReaderAuth } from '../crypto/mdoc-suite';
-import { VerifiablePresentation, PresentationRequest, VerificationResult } from '../types';
+import { mdocDeviceAuthSuite, DeviceAuth, ReaderAuth } from '../crypto/mdoc-suite.ts';
+import { VerifiablePresentation, PresentationRequest, VerificationResult } from '../types/index.ts';
 
 export interface MdlPresentation {
   type?: string;
