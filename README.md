@@ -22,6 +22,7 @@ npm run example:sd-jwt          # SD-JWT example
 - **Protocol Adapters:** Pluggable adapters for OID4VP, DIDComm, CHAPI, WACI, SIOP, and VC-API.
 - **Handlers:** Modular handlers for each credential format (W3C, mDL, SD-JWT).
 - **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, SD-JWT, and mDL (mobile driver’s license).
+- **Status Checker:** Pluggable revocation/status modules (e.g., StatusList2021, Bitstring, Token).
 - **Policies:** Post-verification business rules (e.g., age, validity, EUDI).
 - **TypeScript Interfaces:** Strongly-typed, extensible SDK contracts.
 
@@ -37,6 +38,7 @@ credential-verifier-sdk/
 │   ├── handlers/              # Credential handlers (W3C, mDL, SD-JWT)
 │   ├── policies/              # Policy modules (age, validity, over18, eudi)
 │   ├── protocol-adapters/     # Protocol adapters (OID4VP, DIDComm, etc)
+│   ├── status/                # Status checkers (StatusList2021, Bitstring, Token)
 │   └── types/                 # TypeScript interfaces
 ├── examples/
 │   ├── mdl-validity-example.ts        # mDL + Validity example
@@ -86,6 +88,18 @@ Crypto suites provide cryptographic operations for different credential formats:
 - **BbsSuite:** BBS+ signature proofs (`src/crypto/bbs-suite.ts`)
 - **MdocDeviceAuthSuite:** mDL (mobile driver’s license) device authentication (`src/crypto/mdoc-suite.ts`)
 - **SdJwtSuite:** SD-JWT selective disclosure proofs (`src/handlers/sd-jwt-handler.ts`)
+
+---
+
+## 🛡️ Status Checker
+
+The Status Checker is a pluggable component for credential status and revocation checking. It is injected into handlers (such as W3cHandler) and supports multiple mechanisms:
+
+- **StatusList2021Checker:** Checks revocation using the W3C StatusList2021 bitstring mechanism (`src/status/statuslist2021-checker.ts`)
+- **BitstringStatusListChecker:** Checks custom bitstring-based status lists (`src/status/bitstring-statuslist-checker.ts`)
+- **TokenStatusListChecker:** Checks token-based status lists (`src/status/token-statuslist-checker.ts`)
+
+You can implement your own status checker by following the `StatusChecker` interface in `src/types/interfaces.ts` and inject it into handlers for custom revocation logic.
 
 ---
 
