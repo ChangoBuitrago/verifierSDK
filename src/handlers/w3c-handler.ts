@@ -22,6 +22,10 @@ export interface W3cHandlerOptions {
 }
 
 import { ed25519Suite, Ed25519Proof } from '../crypto/ed25519-suite.ts';
+import { ecdsaR1Suite, EcdsaR1Proof } from '../crypto/ecdsa-r1-suite.ts';
+import { ecdsaR2Suite, EcdsaR2Proof } from '../crypto/ecdsa-r2-suite.ts';
+import { bbsSuite, BbsProof } from '../crypto/bbs-suite.ts';
+import { jwsSuite, JwsProof } from '../crypto/jws-suite.ts';
 import { VerifiablePresentation, PresentationRequest, VerificationResult, VerifiableCredential } from '../types/index.ts';
 
 export class W3cHandler {
@@ -34,10 +38,14 @@ export class W3cHandler {
     this.didResolver = options.didResolver;
     this.logger = options.logger;
     this.schemaRegistry = options.schemaRegistry;
-    // Each handler manages its own crypto dependencies
+    // Map all supported W3C Data Integrity proof types to their suites
     this.cryptoSuites = {
       'Ed25519Signature2020': ed25519Suite,
-      'Ed25519Signature2018': ed25519Suite
+      'Ed25519Signature2018': ed25519Suite,
+      'EcdsaSecp256r1Signature2019': ecdsaR1Suite,
+      'EcdsaSecp256k1Signature2019': ecdsaR2Suite,
+      'BbsBlsSignature2020': bbsSuite,
+      'JsonWebSignature2020': jwsSuite
     };
   }
 
