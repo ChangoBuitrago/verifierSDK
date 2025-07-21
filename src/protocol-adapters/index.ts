@@ -4,14 +4,14 @@
  */
 
 // Existing OID4VP adapter
-export { OID4VP_Adapter, OID4VPRequest, OID4VPResponse, SessionData, ValidationResult } from './oid4vp';
+export { OID4VP_Adapter, OID4VPRequest, OID4VPResponse, SessionData, ValidationResult } from './oid4vp-adapter';
 
 // New protocol adapters
-export { DIDCommAdapter, DIDCommMessage, DIDCommResponse } from './didcomm';
-export { CHAPIAdapter, CHAPIRequest, CHAPIResponse, CHAPICredentialRequest } from './chapi';
-export { WACIAdapter, WACIRequest, WACIResponse } from './waci';
-export { SIOPAdapter, SIOPRequest, SIOPResponse, SIOPIDToken } from './siop';
-export { VCAPIAdapter, VCAPIRequest, VCAPIResponse, VCAPIVerificationRequest, VCAPIVerificationResponse } from './vc-api';
+export { DIDCommAdapter, DIDCommMessage, DIDCommResponse } from './didcomm-adapter';
+export { CHAPIAdapter, CHAPIRequest, CHAPIResponse, CHAPICredentialRequest } from './chapi-adapter';
+export { WACIAdapter, WACIRequest, WACIResponse } from './waci-adapter';
+export { SIOPAdapter, SIOPRequest, SIOPResponse, SIOPIDToken } from './siop-adapter';
+export { VCAPIAdapter, VCAPIRequest, VCAPIResponse, VCAPIVerificationRequest, VCAPIVerificationResponse } from './vc-api-adapter';
 
 /**
  * Common Protocol Adapter Interface
