@@ -108,18 +108,6 @@ export class VerifierImpl {
   }
 
   /**
-   * Gets information about all registered handlers
-   * @returns Object - Information about available handlers
-   */
-  getHandlerInfo(): Array<{ name: string; supportedTypes?: string[]; supportedFeatures?: Record<string, any> }> {
-    return this.handlers.map(handler => ({
-      name: handler.constructor.name,
-      supportedTypes: (handler as any).getSupportedProofTypes ? (handler as any).getSupportedProofTypes() : undefined,
-      supportedFeatures: (handler as any).getSupportedFeatures ? (handler as any).getSupportedFeatures() : undefined
-    }));
-  }
-
-  /**
    * Adds a new handler to the verifier
    * @param handler - The handler to add
    */
@@ -154,48 +142,4 @@ export class VerifierImpl {
  */
 export function createVerifier(options: { handlers: CredentialHandler[]; policies?: Record<string, Policy> }): VerifierImpl {
   return new VerifierImpl(options);
-}
-
-/**
- * Factory function to create a configured Verifier.
- */
-export function createCredentialVerifier(options: { handlers: Record<string, any>; policies?: Record<string, any> }): any {
-  // Note: This would import the actual implementation
-  // For now, we'll return a mock implementation
-  return {
-    createRequest: (options: { comment: string }) => ({
-      id: `request_${Date.now()}`,
-      comment: options.comment,
-      request_credentials: [{ type: 'VerifiableCredential', required: true, constraints: {} }],
-      challenge: `challenge_${Date.now()}`
-    }),
-    verify: async (vp: any, request: any) => ({
-      status: 'verified' as const
-    })
-  };
-}
-
-/**
- * Factory function to create a configured Issuer.
- */
-export function createCredentialIssuer(options: { formatters: Record<string, any>; signers: Record<string, any>; policies?: Record<string, any>; issuerDid: string }): any {
-  // Note: This would import the actual implementation
-  // For now, we'll return a mock implementation
-  return {
-    issue: async (request: any) => ({
-      '@context': ['https://www.w3.org/2018/credentials/v1'],
-      id: `credential:${options.issuerDid}:${Date.now()}`,
-      type: request.type,
-      issuer: options.issuerDid,
-      issuanceDate: new Date().toISOString(),
-      credentialSubject: request.credentialSubject,
-      proof: {
-        type: 'Ed25519Signature2020',
-        created: new Date().toISOString(),
-        verificationMethod: `${options.issuerDid}#key-1`,
-        proofPurpose: 'assertionMethod',
-        proofValue: 'mock-signature'
-      }
-    })
-  };
 } 
