@@ -1,6 +1,6 @@
 import { createVerifier } from '../src/core/index.ts';
 import { W3cHandler } from '../src/handlers/w3c-handler.ts';
-import { EudiPolicy, AgeVerificationPolicy } from '../src/policies/index.ts';
+import { EudiPolicy, Over18Policy } from '../src/policies/index.ts';
 import { VerifiablePresentation } from '../src/types/index.ts';
 
 // Create handler
@@ -8,14 +8,14 @@ const w3cHandler = new W3cHandler();
 
 // Create policies
 const eudiPolicy = new EudiPolicy();
-const agePolicy = new AgeVerificationPolicy();
+const agePolicy = new Over18Policy();
 
 // Create verifier
 const verifier = createVerifier({
   handlers: [w3cHandler],
   policies: {
     'eudi': eudiPolicy,
-    'age_verification': agePolicy
+    'over18': agePolicy
   }
 });
 
@@ -59,11 +59,11 @@ const eudiCredential: VerifiablePresentation = {
 async function run() {
   const result = await verifier.verify(eudiCredential, {
     id: 'eudi-request',
-    policies: ['eudi', 'age_verification'],
+    policies: ['eudi', 'over18'],
     request_credentials: [{ type: 'EuropeanDigitalIdentityCredential', required: true }],
     challenge: 'eudi-challenge'
   });
-  console.log('EUDI + Age Verification Result:', result);
+  console.log('EUDI + Over 18 Verification Result:', result);
 }
 
 run().catch(console.error); 
