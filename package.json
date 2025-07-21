@@ -16,9 +16,9 @@
     "clean": "rm -rf dist",
     "prepare": "npm run build",
     "test": "echo \"No tests yet\"",
-    "example:mdl-validity": "ts-node --esm examples/mdl-validity-example.ts",
-    "example:w3c-eudi": "ts-node --esm examples/w3c-eudi-over18-example.ts",
-    "example:w3c-over18": "ts-node --esm examples/w3c-over18-example.ts"
+    "example:mdl-validity": "node --loader ts-node/esm examples/mdl-validity-example.ts",
+    "example:w3c-eudi": "node --loader ts-node/esm examples/w3c-eudi-over18-example.ts",
+    "example:w3c-over18": "node --loader ts-node/esm examples/w3c-over18-example.ts"
   },
   "keywords": [
     "verifiable-credentials",
