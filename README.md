@@ -19,9 +19,9 @@ npm run example:sd-jwt          # SD-JWT example
 
 ## 🏗️ Architecture Overview
 
-- **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, SD-JWT, and mDL (mobile driver’s license).
-- **Handlers:** Modular handlers for each credential format (W3C, mDL, SD-JWT).
 - **Protocol Adapters:** Pluggable adapters for OID4VP, DIDComm, CHAPI, WACI, SIOP, and VC-API.
+- **Handlers:** Modular handlers for each credential format (W3C, mDL, SD-JWT).
+- **Crypto Suites:** Modular cryptographic suites for W3C Data Integrity, JWS, SD-JWT, and mDL (mobile driver’s license).
 - **Policies:** Post-verification business rules (e.g., age, validity, EUDI).
 - **TypeScript Interfaces:** Strongly-typed, extensible SDK contracts.
 
@@ -50,16 +50,6 @@ credential-verifier-sdk/
 
 ---
 
-## 🧩 Handlers
-
-Handlers encapsulate format-specific logic:
-
-- **W3cHandler:** For W3C Verifiable Credentials and Presentations (`src/handlers/w3c-handler.ts`)
-- **MdlHandler:** For Mobile Driver’s License (mDL) credentials (`src/handlers/mdl-handler.ts`)
-- **SdJwtHandler:** For SD-JWT credentials and presentations (`src/handlers/sd-jwt-handler.ts`)
-
----
-
 ## 🔌 Protocol Adapters
 
 Adapters in `src/protocol-adapters/` make the SDK protocol-agnostic:
@@ -72,6 +62,30 @@ Adapters in `src/protocol-adapters/` make the SDK protocol-agnostic:
 - **VC-API** (`vc-api-adapter.ts`)
 
 All adapters implement a common interface for receiving and responding to credential requests.
+
+---
+
+## 🧩 Handlers
+
+Handlers encapsulate format-specific logic:
+
+- **W3cHandler:** For W3C Verifiable Credentials and Presentations (`src/handlers/w3c-handler.ts`)
+- **MdlHandler:** For Mobile Driver’s License (mDL) credentials (`src/handlers/mdl-handler.ts`)
+- **SdJwtHandler:** For SD-JWT credentials and presentations (`src/handlers/sd-jwt-handler.ts`)
+
+---
+
+## 🔑 Crypto Suites
+
+Crypto suites provide cryptographic operations for different credential formats:
+
+- **Ed25519Suite:** Ed25519 Data Integrity proofs (`src/crypto/ed25519-suite.ts`)
+- **JwsSuite:** JSON Web Signature proofs (`src/crypto/jws-suite.ts`)
+- **EcdsaR1Suite:** ECDSA secp256r1 proofs (`src/crypto/ecdsa-r1-suite.ts`)
+- **EcdsaR2Suite:** ECDSA secp256k1 proofs (`src/crypto/ecdsa-r2-suite.ts`)
+- **BbsSuite:** BBS+ signature proofs (`src/crypto/bbs-suite.ts`)
+- **MdocDeviceAuthSuite:** mDL (mobile driver’s license) device authentication (`src/crypto/mdoc-suite.ts`)
+- **SdJwtSuite:** SD-JWT selective disclosure proofs (`src/handlers/sd-jwt-handler.ts`)
 
 ---
 
