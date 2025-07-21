@@ -106,31 +106,6 @@ export class VerifierImpl {
       policyResults: Object.keys(policyResults).length > 0 ? policyResults : undefined
     };
   }
-
-  /**
-   * Adds a new handler to the verifier
-   * @param handler - The handler to add
-   */
-  addHandler(handler: CredentialHandler): void {
-    if (!handler || typeof handler.canHandle !== 'function' || typeof handler.verify !== 'function') {
-      throw new Error('Handler must implement canHandle() and verify() methods');
-    }
-    
-    this.handlers.push(handler);
-    console.log(`Added handler: ${handler.constructor.name}`);
-  }
-
-  /**
-   * Removes a handler from the verifier
-   * @param handler - The handler to remove
-   */
-  removeHandler(handler: CredentialHandler): void {
-    const index = this.handlers.indexOf(handler);
-    if (index > -1) {
-      this.handlers.splice(index, 1);
-      console.log(`Removed handler: ${handler.constructor.name}`);
-    }
-  }
 }
 
 /**
