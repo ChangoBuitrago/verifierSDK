@@ -11,11 +11,19 @@ export { W3cHandler, W3cHandlerOptions } from './src/handlers/w3c-credential';
 export { MdlHandler, MdlHandlerOptions, MdlPresentation } from './src/handlers/mobile-license';
 
 // Crypto suites
-export { ed25519Suite, Ed25519Proof } from './src/crypto/ed25519-suite';
-export { mdocDeviceAuthSuite, DeviceAuth, ReaderAuth, SessionData } from './src/crypto/mdoc-suite';
+export { ed25519Suite, Ed25519Proof, ecdsaR1Suite, EcdsaR1Proof, ecdsaR2Suite, EcdsaR2Proof, bbsSuite, BbsProof, jwsSuite, JwsProof } from './src/crypto';
+export { mdocDeviceAuthSuite, DeviceAuth, ReaderAuth, SessionData } from './src/crypto';
 
 // Protocol adapters
-export { OID4VP_Adapter, OID4VPRequest, OID4VPResponse, SessionData as OID4VPSessionData, ValidationResult } from './src/protocol-adapters/oid4vp';
+export { 
+  OID4VP_Adapter, OID4VPRequest, OID4VPResponse, SessionData as OID4VPSessionData, ValidationResult,
+  DIDCommAdapter, DIDCommMessage, DIDCommResponse,
+  CHAPIAdapter, CHAPIRequest, CHAPIResponse, CHAPICredentialRequest,
+  WACIAdapter, WACIRequest, WACIResponse,
+  SIOPAdapter, SIOPRequest, SIOPResponse, SIOPIDToken,
+  VCAPIAdapter, VCAPIRequest, VCAPIResponse, VCAPIVerificationRequest, VCAPIVerificationResponse,
+  ProtocolAdapter
+} from './src/protocol-adapters';
 
 // Policies
 export { AgeVerificationPolicy, ValidityPolicy } from './src/policies';

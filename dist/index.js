@@ -11,7 +11,7 @@ export { MdlHandler } from './src/handlers/mobile-license';
 export { ed25519Suite } from './src/crypto/ed25519-suite';
 export { mdocDeviceAuthSuite } from './src/crypto/mdoc-suite';
 // Protocol adapters
-export { OID4VP_Adapter } from './src/protocol-adapters/oid4vp';
+export { OID4VP_Adapter, DIDCommAdapter, CHAPIAdapter, WACIAdapter, SIOPAdapter, VCAPIAdapter } from './src/protocol-adapters';
 // Policies
 export { AgeVerificationPolicy, ValidityPolicy } from './src/policies';
 // Note: The main handlers and verifier implementations are now in TypeScript
