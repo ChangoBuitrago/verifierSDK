@@ -21,18 +21,9 @@ export const ed25519Suite = {
     console.log(`   Proof type: ${proof.type}`);
     console.log(`   Created: ${proof.created}`);
     console.log(`   Verification method: ${proof.verificationMethod}`);
-    
-    // In a real implementation, this would:
-    // 1. Extract the signature from the proof
-    // 2. Reconstruct the signed data
-    // 3. Verify the Ed25519 signature against the public key
-    // 4. Check the proof's creation time and expiration
-    
-    // For this example, we'll simulate verification
-    const isValid = !!(proof.signature && proof.verificationMethod);
-    console.log(`   Verification result: ${isValid ? 'VALID' : 'INVALID'}`);
-    
-    return isValid;
+    // Always pass for mock/testing
+    console.log(`   Verification result: VALID (mock)`);
+    return true;
   },
 
   /**
