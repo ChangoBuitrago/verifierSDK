@@ -1,7 +1,7 @@
-import { createVerifier } from '../src/core/index';
-import { W3cHandler } from '../src/handlers/w3c-handler';
-import { EudiPolicy, AgeVerificationPolicy } from '../src/policies';
-import { VerifiablePresentation } from '../src/types';
+import { createVerifier } from '../src/core/index.ts';
+import { W3cHandler } from '../src/handlers/w3c-handler.ts';
+import { EudiPolicy, AgeVerificationPolicy } from '../src/policies/index.ts';
+import { VerifiablePresentation } from '../src/types/index.ts';
 
 // Create handler
 const w3cHandler = new W3cHandler();

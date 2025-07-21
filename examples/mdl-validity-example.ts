@@ -1,7 +1,7 @@
-import { createVerifier } from '../src/core/index';
-import { MdlHandler, MdlPresentation } from '../src/handlers/mdl-handler';
-import { ValidityPolicy } from '../src/policies';
-import { VerifiablePresentation } from '../src/types';
+import { createVerifier } from '../src/core/index.ts';
+import { MdlHandler, MdlPresentation } from '../src/handlers/mdl-handler.ts';
+import { ValidityPolicy } from '../src/policies/index.ts';
+import { VerifiablePresentation } from '../src/types/index.ts';
 
 // Create handler
 const mdlHandler = new MdlHandler();
