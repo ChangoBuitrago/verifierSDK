@@ -19,7 +19,6 @@ export interface W3cHandlerOptions {
   didResolver?: DidResolver;
   logger?: Logger;
   schemaRegistry?: SchemaRegistry;
-  supportedProofTypes?: string[];
 }
 
 import { ed25519Suite, Ed25519Proof } from '../crypto/ed25519-suite.ts';
@@ -30,13 +29,11 @@ export class W3cHandler {
   private logger?: Logger;
   private schemaRegistry?: SchemaRegistry;
   private cryptoSuites: Record<string, any>;
-  private supportedProofTypes: string[];
 
   constructor(options: W3cHandlerOptions = {}) {
     this.didResolver = options.didResolver;
     this.logger = options.logger;
     this.schemaRegistry = options.schemaRegistry;
-    this.supportedProofTypes = options.supportedProofTypes || ['Ed25519Signature2020', 'Ed25519Signature2018'];
     // Each handler manages its own crypto dependencies
     this.cryptoSuites = {
       'Ed25519Signature2020': ed25519Suite,
@@ -112,9 +109,5 @@ export class W3cHandler {
       (this.logger || console).error(`   W3C verification error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return { status: 'rejected', error: error instanceof Error ? error.message : 'Unknown error during W3C verification' };
     }
-  }
-
-  getSupportedProofTypes(): string[] {
-    return this.supportedProofTypes;
   }
 } 
