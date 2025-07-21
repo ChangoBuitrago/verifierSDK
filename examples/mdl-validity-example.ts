@@ -19,7 +19,7 @@ const verifier = createVerifier({
 
 // Example mDL credential
 const mdlCredential: MdlPresentation = {
-  type: 'mDL',
+  type: ['mDL'],
   deviceResponse: {
     deviceAuth: {
       deviceKey: 'valid-device-key',

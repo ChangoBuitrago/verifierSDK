@@ -7,7 +7,7 @@ import { mdocDeviceAuthSuite, DeviceAuth, ReaderAuth } from '../crypto/mdoc-suit
 import { VerifiablePresentation, PresentationRequest, VerificationResult } from '../types/index.ts';
 
 export interface MdlPresentation {
-  type?: string;
+  type?: string | string[];
   deviceResponse?: {
     deviceAuth: DeviceAuth;
     readerAuth?: ReaderAuth;

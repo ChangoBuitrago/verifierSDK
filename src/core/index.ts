@@ -35,7 +35,7 @@ export class VerifierImpl {
    */
   async verify(presentation: VerifiablePresentation, originalRequest?: PresentationRequest): Promise<VerificationResult> {
     console.log("=== Starting verification process ===");
-    console.log(`Presentation type: ${presentation.type.join(', ')}`);
+    console.log(`Presentation type: ${Array.isArray(presentation.type) ? presentation.type.join(', ') : presentation.type}`);
     
     if (!presentation) {
       throw new Error('No presentation provided for verification');
