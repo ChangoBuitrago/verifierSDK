@@ -3,22 +3,13 @@
  * Self-contained handler for W3C verifiable presentations
  */
 
-// Example dependency types (replace with your actual SDK types)
-export interface DidResolver {
-  resolve(did: string): Promise<any>;
-}
-export interface Logger {
-  log(...args: any[]): void;
-  error(...args: any[]): void;
-}
-export interface SchemaRegistry {
-  getSchema(type: string): Promise<any>;
-}
+import { DidResolver, Logger, SchemaRegistry } from '../types/index.ts';
 
 export interface W3cHandlerOptions {
   didResolver?: DidResolver;
   logger?: Logger;
   schemaRegistry?: SchemaRegistry;
+  statusChecker?: StatusChecker;
 }
 
 import { ed25519Suite, Ed25519Proof } from '../crypto/ed25519-suite.ts';
@@ -26,18 +17,20 @@ import { ecdsaR1Suite, EcdsaR1Proof } from '../crypto/ecdsa-r1-suite.ts';
 import { ecdsaR2Suite, EcdsaR2Proof } from '../crypto/ecdsa-r2-suite.ts';
 import { bbsSuite, BbsProof } from '../crypto/bbs-suite.ts';
 import { jwsSuite, JwsProof } from '../crypto/jws-suite.ts';
-import { VerifiablePresentation, PresentationRequest, VerificationResult, VerifiableCredential } from '../types/index.ts';
+import { VerifiablePresentation, PresentationRequest, VerificationResult, VerifiableCredential, StatusChecker } from '../types/index.ts';
 
 export class W3cHandler {
   private didResolver?: DidResolver;
   private logger?: Logger;
   private schemaRegistry?: SchemaRegistry;
   private cryptoSuites: Record<string, any>;
+  private statusChecker?: StatusChecker;
 
   constructor(options: W3cHandlerOptions = {}) {
     this.didResolver = options.didResolver;
     this.logger = options.logger;
     this.schemaRegistry = options.schemaRegistry;
+    this.statusChecker = options.statusChecker;
     // Map all supported W3C Data Integrity proof types to their suites
     this.cryptoSuites = {
       'Ed25519Signature2020': ed25519Suite,
@@ -76,6 +69,14 @@ export class W3cHandler {
       if (!credential) {
         (this.logger || console).log("   No verifiable credential found");
         return { status: 'rejected', error: 'No verifiable credential' };
+      }
+      // Status check (for each credential)
+      if (this.statusChecker) {
+        const statusResult = await this.statusChecker.checkStatus(credential);
+        if (!statusResult.active) {
+          (this.logger || console).log("   Credential is revoked or suspended");
+          return { status: 'rejected', error: statusResult.reason || 'Credential revoked or suspended' };
+        }
       }
       const proof = credential.proof;
       if (!proof) {

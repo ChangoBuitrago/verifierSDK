@@ -15,6 +15,12 @@ export interface CredentialSubject {
   [key: string]: any;
 }
 
+export interface CredentialStatus {
+  id: string; // URL or DID for the status list or registry
+  type: string; // e.g., "StatusList2021", "BitstringStatusList", "TokenStatusList"
+  [key: string]: any; // Allow for mechanism-specific fields
+}
+
 export interface VerifiableCredential {
   '@context': string[];
   id: string;
@@ -23,6 +29,7 @@ export interface VerifiableCredential {
   issuanceDate: string;
   credentialSubject: CredentialSubject;
   proof: Proof;
+  status?: CredentialStatus; // Use the new type here
 }
 
 export interface VerifiablePresentation {
@@ -109,6 +116,17 @@ export interface CredentialHandler {
   }>;
 }
 
+// Status checking interfaces
+export interface StatusResult {
+  active: boolean; // true if not revoked/suspended
+  reason?: string;
+}
+
+export interface StatusChecker {
+  checkStatus(credential: VerifiableCredential): Promise<StatusResult>;
+  canHandle?(credential: VerifiableCredential): boolean; // Optional for composite
+}
+
 // 3. Core Actor SDK Interfaces
 export interface CredentialIssuer {
   issue(request: CredentialRequest): Promise<VerifiableCredential>;
@@ -146,6 +164,18 @@ export interface CredentialIssuerOptions {
   formatters: Record<string, any>; // A map of formatter names to formatter instances
   signers: Record<string, any>; // A map of signer names to pre-configured signer instances
   policies?: Record<string, any>;
+}
+
+// Dependency types for DID resolution, logging, and schema registry
+export interface DidResolver {
+  resolve(did: string): Promise<any>;
+}
+export interface Logger {
+  log(...args: any[]): void;
+  error(...args: any[]): void;
+}
+export interface SchemaRegistry {
+  getSchema(type: string): Promise<any>;
 }
 
  
