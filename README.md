@@ -86,29 +86,6 @@ Policies are post-verification business rules:
 
 ---
 
-## 📋 TypeScript Interfaces
-
-All interfaces are in `src/types/interfaces.ts`:
-
-```typescript
-export interface CredentialVerifier {
-  createRequest(options: { comment: string }): PresentationRequest;
-  verify(vp: VerifiablePresentation, request: PresentationRequest): Promise<VerificationResult>;
-}
-
-export interface CredentialIssuer {
-  issue(request: CredentialRequest): Promise<VerifiableCredential>;
-}
-
-export interface CredentialHolderWallet {
-  requestCredential(issuerEndpoint: URL, request: CredentialRequest): Promise<VerifiableCredential>;
-  storeCredential(vc: VerifiableCredential): Promise<{ id: string }>;
-  createPresentation(request: PresentationRequest): Promise<VerifiablePresentation>;
-}
-```
-
----
-
 ## 🤝 Contributing
 
 1. Fork the repository
