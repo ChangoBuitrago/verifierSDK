@@ -1,5 +1,5 @@
 import { createVerifier } from '../src/core/index';
-import { MdlHandler, MdlPresentation } from '../src/handlers/mobile-license';
+import { MdlHandler, MdlPresentation } from '../src/handlers/mdl-handler';
 import { ValidityPolicy } from '../src/policies';
 import { VerifiablePresentation } from '../src/types';
 

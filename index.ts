@@ -7,8 +7,8 @@
 export { createVerifier, VerifierImpl, CredentialHandler } from './src/core/index';
 
 // Handlers
-export { W3cHandler, W3cHandlerOptions } from './src/handlers/w3c-credential';
-export { MdlHandler, MdlHandlerOptions, MdlPresentation } from './src/handlers/mobile-license';
+export { W3cHandler, W3cHandlerOptions } from './src/handlers/w3c-handler';
+export { MdlHandler, MdlHandlerOptions, MdlPresentation } from './src/handlers/mdl-handler';
 
 // Crypto suites
 export { ed25519Suite, Ed25519Proof, ecdsaR1Suite, EcdsaR1Proof, ecdsaR2Suite, EcdsaR2Proof, bbsSuite, BbsProof, jwsSuite, JwsProof } from './src/crypto';

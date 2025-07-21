@@ -1,5 +1,5 @@
 import { createVerifier } from '../src/core/index';
-import { W3cHandler } from '../src/handlers/w3c-credential';
+import { W3cHandler } from '../src/handlers/w3c-handler';
 import { EudiPolicy, AgeVerificationPolicy } from '../src/policies';
 import { VerifiablePresentation } from '../src/types';
 
