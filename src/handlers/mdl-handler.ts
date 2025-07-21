@@ -134,16 +134,4 @@ export class MdlHandler {
       };
     }
   }
-
-  /**
-   * Gets the supported mDL features for this handler
-   * @returns Object - Object describing supported features
-   */
-  getSupportedFeatures(): Record<string, boolean> {
-    return {
-      deviceAuthentication: true,
-      readerAuthentication: this.enableReaderAuth,
-      dataElementVerification: true
-    };
-  }
 } 
