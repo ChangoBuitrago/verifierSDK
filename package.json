@@ -1,0 +1,20 @@
+{
+  "name": "credential-verifier-sdk",
+  "version": "1.0.0",
+  "description": "A decoupled, agnostic Verifier SDK with pluggable handlers",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["verifiable-credentials", "sdk", "verifier", "w3c", "mdl"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0",
+    "@types/node": "^20.0.0"
+  }
+} 
