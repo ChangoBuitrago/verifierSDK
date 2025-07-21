@@ -5,4 +5,5 @@
  
 export { AgeVerificationPolicy } from './age-policy.ts';
 export { ValidityPolicy } from './validity-policy.ts';
-export { EudiPolicy } from './eudi-policy.ts'; 
+export { EudiPolicy } from './eudi-policy.ts';
+export { Over18Policy } from './over18-policy.ts'; 
