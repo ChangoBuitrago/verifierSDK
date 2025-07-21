@@ -1,70 +1,67 @@
 import { createVerifier } from '../src/core/index.ts';
 import { W3cHandler } from '../src/handlers/w3c-handler.ts';
-import { EudiPolicy, Over18Policy } from '../src/policies/index.ts';
+import { Over18Policy } from '../src/policies/index.ts';
 import { VerifiablePresentation } from '../src/types/index.ts';
 
 // Create handler
 const w3cHandler = new W3cHandler();
 
-// Create policies
-const eudiPolicy = new EudiPolicy();
+// Create policy
 const over18Policy = new Over18Policy();
 
 // Create verifier
 const verifier = createVerifier({
   handlers: [w3cHandler],
   policies: {
-    'eudi': eudiPolicy,
     'over18': over18Policy
   }
 });
 
-// Example EUDI W3C credential with birthdate
-const eudiCredential: VerifiablePresentation = {
+// Example W3C credential with birthdate
+const w3cCredential: VerifiablePresentation = {
   '@context': ['https://www.w3.org/2018/credentials/v1'],
   type: ['VerifiablePresentation'],
   verifiableCredential: [
     {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
-      id: 'credential:eudi:001',
-      type: ['VerifiableCredential', 'EuropeanDigitalIdentityCredential'],
-      issuer: 'did:example:eudi-authority',
+      id: 'credential:w3c:001',
+      type: ['VerifiableCredential', 'ExampleCredential'],
+      issuer: 'did:example:issuer',
       issuanceDate: '2024-01-01T00:00:00Z',
       credentialSubject: {
-        id: 'did:example:eudi-holder',
-        family_name: 'Doe',
-        given_name: 'Jane',
-        birth_date: '1990-04-20',
+        id: 'did:example:holder',
+        name: 'Alice Example',
+        birthdate: '2000-04-20',
         nationality: 'EU'
       },
       proof: {
         type: 'Ed25519Signature2020',
         created: '2024-01-01T00:00:00Z',
-        verificationMethod: 'did:example:eudi-holder#key-1',
+        verificationMethod: 'did:example:holder#key-1',
         proofPurpose: 'assertionMethod',
-        proofValue: 'valid-eudi-signature'
+        proofValue: 'valid-signature'
       }
     }
   ],
-  holder: 'did:example:eudi-holder',
+  holder: 'did:example:holder',
   proof: {
     type: 'Ed25519Signature2020',
     created: '2024-01-01T00:00:00Z',
-    verificationMethod: 'did:example:eudi-holder#key-1',
+    verificationMethod: 'did:example:holder#key-1',
     proofPurpose: 'authentication',
-    proofValue: 'valid-eudi-presentation-signature'
+    proofValue: 'valid-presentation-signature'
   }
 };
 
 async function run() {
   try {
-    const result = await verifier.verify(eudiCredential, {
-      id: 'eudi-request',
-      policies: ['eudi', 'over18'],
-      request_credentials: [{ type: 'EuropeanDigitalIdentityCredential', required: true }],
-      challenge: 'eudi-challenge'
+    const result = await verifier.verify(w3cCredential, {
+      id: 'w3c-request',
+      policies: ['over18'],
+      request_credentials: [{ type: 'ExampleCredential', required: true }],
+      challenge: 'w3c-challenge'
     });
-    console.log('EUDI + Over 18 Verification Result:', result);
+    console.log('W3C + Over 18 Verification Result:', result);
   } catch (error) {
     console.error('Caught error:', error);
   }

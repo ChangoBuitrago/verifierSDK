@@ -1,0 +1,1 @@
+export { SdJwtHandler } from './sd-jwt-handler.ts'; 
