@@ -3,7 +3,8 @@
  * Provides a clean, protocol-agnostic interface for credential verification
  */
 
-import { VerifiablePresentation, PresentationRequest, VerificationResult, Policy, VerificationData, CredentialHandler } from '../types';
+import { VerifiablePresentation, PresentationRequest, VerificationResult, Policy, VerificationData, CredentialHandler, CredentialVerifier } from '../types';
+import type { CredentialVerifierOptions } from '../types';
 
 // Re-export the interface for convenience
 export { CredentialHandler };
@@ -12,11 +13,11 @@ export { CredentialHandler };
  * Core Verifier Implementation
  * Iterates through handlers to find one that can process the data
  */
-export class VerifierImpl {
+export class VerifierImpl implements CredentialVerifier {
   private handlers: CredentialHandler[];
   private policies: Record<string, Policy>;
   
-  constructor(options: { handlers: CredentialHandler[]; policies?: Record<string, Policy> }) {
+  constructor(options: CredentialVerifierOptions) {
     this.handlers = options.handlers || [];
     this.policies = options.policies || {};
     
@@ -106,6 +107,22 @@ export class VerifierImpl {
       policyResults: Object.keys(policyResults).length > 0 ? policyResults : undefined
     };
   }
+
+  createRequest(options: { comment: string }): PresentationRequest {
+    // Minimal stub implementation for interface compliance
+    return {
+      id: 'request-id',
+      comment: options.comment,
+      policies: [],
+      request_credentials: [],
+      challenge: 'challenge-string'
+    };
+  }
+
+  getHandlerInfo?(): Record<string, any> {
+    // Optional stub for interface compliance
+    return { handlerCount: this.handlers.length };
+  }
 }
 
 /**
@@ -115,6 +132,6 @@ export class VerifierImpl {
  * @param options.policies - Map of policy names to policy instances
  * @returns VerifierImpl - A configured Verifier instance
  */
-export function createVerifier(options: { handlers: CredentialHandler[]; policies?: Record<string, Policy> }): VerifierImpl {
+export function createVerifier(options: CredentialVerifierOptions): VerifierImpl {
   return new VerifierImpl(options);
 } 
