@@ -128,42 +128,10 @@ export interface StatusChecker {
 }
 
 // 3. Core Actor SDK Interfaces
-export interface CredentialIssuer {
-  issue(request: CredentialRequest): Promise<VerifiableCredential>;
-  getConfigurationInfo?(): Record<string, any>;
-}
-
 export interface CredentialVerifier {
   createRequest(options: { comment: string }): PresentationRequest;
-  verify(vp: VerifiablePresentation, request: PresentationRequest): Promise<VerificationResult>;
+  verify(vp: VerifiablePresentation, request?: PresentationRequest): Promise<VerificationResult>;
   getHandlerInfo?(): Record<string, any>;
-}
-
-export interface CredentialHolderWallet {
-  requestCredential(issuerEndpoint: URL, request: CredentialRequest): Promise<VerifiableCredential>;
-  storeCredential(vc: VerifiableCredential): Promise<{ id: string }>;
-  createPresentation(request: PresentationRequest): Promise<VerifiablePresentation>;
-}
-
-// 4. SDK Factory Patterns & Options
-
-/**
- * Configuration for creating a Verifier instance.
- * Note: Dependencies like the didResolver are injected into the handlers, not the core verifier.
- */
-export interface CredentialVerifierOptions {
-  handlers: Record<string, any>; // A map of handler names to pre-configured handler instances
-  policies?: Record<string, any>;
-}
-
-/**
- * Configuration for creating an Issuer instance.
- * Note: The keyManager is a dependency of the signer, not the core issuer.
- */
-export interface CredentialIssuerOptions {
-  formatters: Record<string, any>; // A map of formatter names to formatter instances
-  signers: Record<string, any>; // A map of signer names to pre-configured signer instances
-  policies?: Record<string, any>;
 }
 
 // Dependency types for DID resolution, logging, and schema registry
@@ -176,6 +144,17 @@ export interface Logger {
 }
 export interface SchemaRegistry {
   getSchema(type: string): Promise<any>;
+}
+
+// 4. SDK Factory Patterns & Options
+
+/**
+ * Configuration for creating a Verifier instance.
+ * Note: Dependencies like the didResolver are injected into the handlers, not the core verifier.
+ */
+export interface CredentialVerifierOptions {
+  handlers: CredentialHandler[];
+  policies?: Record<string, Policy>;
 }
 
  
