@@ -53,9 +53,10 @@ export interface VerifiablePresentation {
 }
 
 export interface CredentialHandler {
-  handle(
-    credential: VerifiableCredential | VerifiablePresentation | string
-  ): Promise<VerificationData>;
+  verify(
+    presentation: VerifiablePresentation,
+    originalRequest?: PresentationRequest
+  ): Promise<VerificationResult>;
 }
 
 export interface CryptoSuite {
@@ -95,13 +96,9 @@ export interface VerificationResult {
  */
 export interface CredentialVerifier {
   verify(
-    credential: VerifiableCredential | VerifiablePresentation | string,
-    options?: {
-      policies?: Policy[];
-      handler?: CredentialHandler;
-      domain?: string;
-      challenge?: string;
-    }
+    presentation: VerifiablePresentation,
+    originalRequest?: PresentationRequest,
+    options?: VerifyOptions
   ): Promise<VerificationResult>;
 }
 
@@ -160,4 +157,21 @@ export interface PolicyResult {
   compliant: boolean;
   errors?: string[];
   details?: any;
+}
+
+export interface PresentationRequest {
+  id: string;
+  comment?: string;
+  policies?: string[];
+  request_credentials: {
+    type: string;
+    required?: boolean;
+    constraints?: any;
+  }[];
+  challenge: string;
+}
+
+export interface VerifyOptions {
+  policies?: Policy[];
+  handler?: CredentialHandler;
 }
