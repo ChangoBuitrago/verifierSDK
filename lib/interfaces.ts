@@ -95,6 +95,10 @@ export interface VerificationResult {
  * Interface for a credential verifier (main SDK entry point).
  */
 export interface CredentialVerifier {
+  createRequest(
+    options: { policies?: string[]; challenge: string }
+  ): PresentationRequest;
+
   verify(
     presentation: VerifiablePresentation,
     originalRequest?: PresentationRequest,

@@ -10,6 +10,15 @@ import {
 export class Verifier implements CredentialVerifier {
   constructor(options: CredentialVerifierOptions) {}
 
+  createRequest(options: { policies?: string[]; challenge: string }): PresentationRequest {
+    return {
+      id: Math.random().toString(36).substring(2),
+      challenge: options.challenge,
+      policies: options.policies,
+      request_credentials: [],
+    };
+  }
+
   async verify(
     presentation: VerifiablePresentation,
     originalRequest?: PresentationRequest,
