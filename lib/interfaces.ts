@@ -1,76 +1,8 @@
-/**
- * Represents a cryptographic proof attached to a credential or presentation. Should come from crypto library.
- */
-export interface Proof {
-  type: string;
-  created: string;
-  verificationMethod: string;
-  proofPurpose: string;
-  proofValue?: string;
-  [key: string]: any; // Allow custom properties like sdJwt
-}
-
-/**
- * Represents the subject of a credential (the entity the credential is about).
- */
-export interface CredentialSubject {
-  id: string; // Holder's DID
-  [key: string]: any;
-}
-
-/**
- * Represents the status/revocation information for a credential.
- */
-export interface CredentialStatus {
-  id: string; // URL or DID for the status list or registry
-  type: string; // e.g., "StatusList2021", "BitstringStatusList", "TokenStatusList"
-  [key: string]: any; // Allow for mechanism-specific fields
-}
-
-/**
- * Represents a W3C Verifiable Credential.
- */
-export interface VerifiableCredential {
-  "@context": string[];
-  id: string;
-  type: string[];
-  issuer: string; // Issuer's DID
-  issuanceDate: string;
-  credentialSubject: CredentialSubject;
-  proof: Proof;
-  status?: CredentialStatus;
-}
-
-/**
- * Represents a W3C Verifiable Presentation (a collection of credentials shared by a holder).
- */
-export interface VerifiablePresentation {
-  "@context": string[];
-  type: string[];
-  verifiableCredential: VerifiableCredential[];
-  holder: string; // Holder's DID
-  proof: Proof;
-}
-
-export interface CredentialHandler {
-  verify(
-    presentation: VerifiablePresentation,
-    originalRequest?: PresentationRequest
-  ): Promise<VerificationResult>;
-}
-
-export interface CryptoSuite {
-  verify(credential: any): Promise<boolean>; // come from crypto library
-}
-
-export interface CredentialVerifierOptions {
-  didResolver: DidResolver;
-  logger: Logger;
-  schemaValidator: SchemaValidator;
-  cryptosuites: {
-    [key: string]: CryptoSuite;
-  };
-}
+import { Constraint } from "./constraints";
+import { Cryptosuite, ProofPurpose } from "./cryptosuites";
+import { CredentialPolicy, PolicyResult } from "./policy";
+import { SchemaValidator } from "./schema-validator";
+import { Format, VerifiableCredential, VerifiablePresentation } from "./vc-vp";
 
 /**
  * Represents the result of a verification process.
@@ -91,18 +23,59 @@ export interface VerificationResult {
   }[];
 }
 
+export interface CredentialVerifierRequestOptions {
+  policies?: CredentialPolicy[]; // Policies that are used to verify the VP. Based on the policies, the requested credentials will be created in the presentation request.
+  proofOptions: {
+    purpose: ProofPurpose; // Expected purpose of the VP proof
+    domain?: string; // Expected domain of the VP
+    challengeGenerator?: () => Promise<string> | string; // This function will be called to generate a challenge value for the VP proof
+    type: Cryptosuite[]; // Types of the proofs that are accepted for that VP
+  };
+}
+export interface CredentialVerifierPresentationRequest {
+  id: string;
+  credentials: {
+    type: string; // Type of the credential e.g. "VerifiableCredential"
+    required?: boolean; // Whether the credential is required inside the VP
+    constraints?: { [key: string]: Constraint }; // Constraints for the credential subject
+    format?: Format; // Format of the credential e.g. "jwt" or "ldp"
+    proofOptions: {
+      purpose: ProofPurpose; // Expected purpose of the VC proof
+      type: Cryptosuite[]; // Types of the proofs that are accepted for that VC
+    }; // Same options as for the VP proof except challenge and domain
+  }[];
+  proofOptions: {
+    purpose: ProofPurpose; // Expected purpose of the VP proof
+    domain?: string; // Expected domain of the VP
+    challenge?: string; // Challenge value used in VP proof
+    type: Cryptosuite[]; // Types of the proofs that are accepted for that VP
+  };
+}
+
+export interface ProofVerifier {
+  verify(credential: any): Promise<boolean>; // come from crypto library
+}
+
+export interface CredentialVerifierOptions {
+  didResolver: DidResolver;
+  logger: Logger;
+  schemaValidator: SchemaValidator;
+  cryptosuites: {
+    [key in Cryptosuite]: ProofVerifier;
+  };
+}
+
 /**
  * Interface for a credential verifier (main SDK entry point).
  */
 export interface CredentialVerifier {
   createRequest(
-    options: { policies?: string[]; challenge: string }
-  ): PresentationRequest;
+    options: CredentialVerifierRequestOptions
+  ): CredentialVerifierPresentationRequest;
 
   verify(
     presentation: VerifiablePresentation,
-    originalRequest?: PresentationRequest,
-    options?: VerifyOptions
+    presentationRequest: CredentialVerifierPresentationRequest
   ): Promise<VerificationResult>;
 }
 
@@ -124,45 +97,6 @@ export interface Logger {
   error(...args: any[]): void;
 }
 
-export interface SchemaValidationResult {
-  valid: boolean;
-  errors?: string[];
-}
-
-/**
- * Interface for a schema validator dependency. It's a special type of policy that validates the schema of the credential.
- */
-export interface SchemaValidator {
-  validate(verificationData: VerificationData): Promise<SchemaValidationResult>;
-}
-
-/**
- * Interface for a policy module that evaluates business rules after cryptographic verification.
- */
-export interface Policy {
-  execute(verificationData: VerificationData): PolicyResult;
-}
-
-/**
- * Data passed to policies for evaluation.
- */
-export interface VerificationData {
-  claims: Record<string, any>;
-  credentialType: string[];
-  issuer?: string;
-  holder?: string;
-  [key: string]: any;
-}
-
-/**
- * Represents the result of a policy execution.
- */
-export interface PolicyResult {
-  compliant: boolean;
-  errors?: string[];
-  details?: any;
-}
-
 export interface PresentationRequest {
   id: string;
   comment?: string;
@@ -173,9 +107,4 @@ export interface PresentationRequest {
     constraints?: any;
   }[];
   challenge: string;
-}
-
-export interface VerifyOptions {
-  policies?: Policy[];
-  handler?: CredentialHandler;
 }

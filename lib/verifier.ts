@@ -1,29 +1,39 @@
 import {
   CredentialVerifier,
   CredentialVerifierOptions,
-  VerifiablePresentation,
+  CredentialVerifierPresentationRequest,
+  CredentialVerifierRequestOptions,
   VerificationResult,
-  PresentationRequest,
-  VerifyOptions,
 } from "./interfaces";
+import { VerifiablePresentation } from "./vc-vp";
 
 export class Verifier implements CredentialVerifier {
   constructor(options: CredentialVerifierOptions) {}
 
-  createRequest(options: { policies?: string[]; challenge: string }): PresentationRequest {
+  createRequest(
+    options: CredentialVerifierRequestOptions
+  ): CredentialVerifierPresentationRequest {
     return {
       id: Math.random().toString(36).substring(2),
-      challenge: options.challenge,
-      policies: options.policies,
-      request_credentials: [],
+      credentials:
+        options.policies?.map((policy) => {
+          return {
+            ...policy.getCredentialConstraints(),
+            proofOptions: {
+              purpose: options.proofOptions.purpose,
+              type: options.proofOptions.type,
+            },
+          };
+        }) ?? [],
+      proofOptions: options.proofOptions,
     };
   }
 
   async verify(
     presentation: VerifiablePresentation,
-    originalRequest?: PresentationRequest,
-    options?: VerifyOptions
+    presentationRequest: CredentialVerifierPresentationRequest
   ): Promise<VerificationResult> {
+    // Based on the presentation request, the verifier will know what credentials to verify and what policies to use
     return {
       verified: false,
       credentials: [],
@@ -31,15 +41,15 @@ export class Verifier implements CredentialVerifier {
       errors: {
         type: "NotImplemented",
         title: "Verification not implemented",
-        details: "This is a stubbed response."
+        details: "This is a stubbed response.",
       },
       warnings: [
         {
           type: "StubWarning",
           title: "Stubbed verification",
-          details: "No actual verification was performed."
-        }
-      ]
+          details: "No actual verification was performed.",
+        },
+      ],
     };
   }
 }
