@@ -1,11 +1,17 @@
 import { createVerifier } from ".";
-import {
-  CredentialConstraints,
-  CredentialPolicy,
-  PolicyResult,
-  VerificationData,
-} from "./policy";
+import { CredentialConstraints, CredentialPolicy } from "./policy";
 import { VerifiablePresentation } from "./vc-vp";
+
+class DriversLicenseCredentialSchemaPolicy implements CredentialPolicy {
+  getCredentialConstraints(): CredentialConstraints {
+    return {
+      type: "DriversLicense",
+      schema: {
+        uri: "urn:hedera:0.0.2823411",
+      },
+    };
+  }
+}
 
 class IsOver18Policy implements CredentialPolicy {
   getCredentialConstraints(): CredentialConstraints {
@@ -23,23 +29,12 @@ class IsOver18Policy implements CredentialPolicy {
       format: "jwt-vc",
     };
   }
-
-  execute(verificationData: VerificationData): PolicyResult {
-    return {
-      compliant:
-        verificationData.credentialSubject.birthDate <
-        new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000).toISOString(),
-    };
-  }
 }
 
 async function main() {
   const verifier = createVerifier({
     didResolver: {},
     logger: console.log as any,
-    schemaValidator: {
-      validate: () => Promise.resolve({ valid: true }),
-    },
     cryptosuites: {
       "eddsa-rdfc-2022": {
         verify: () => Promise.resolve(true),
@@ -48,7 +43,7 @@ async function main() {
   });
 
   const presentationRequest = verifier.createRequest({
-    policies: [new IsOver18Policy()],
+    policies: [DriversLicenseCredentialSchemaPolicy, new IsOver18Policy()],
     proofOptions: {
       purpose: "authentication",
       challengeGenerator: () => Math.random().toString(36).substring(2),

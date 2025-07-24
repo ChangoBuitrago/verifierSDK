@@ -13,10 +13,16 @@ export class Verifier implements CredentialVerifier {
   createRequest(
     options: CredentialVerifierRequestOptions
   ): CredentialVerifierPresentationRequest {
+    const policies = options.policies?.map((policy) => {
+      if (typeof policy === "function") {
+        return new policy();
+      }
+      return policy;
+    });
     return {
       id: Math.random().toString(36).substring(2),
       credentials:
-        options.policies?.map((policy) => {
+        policies?.map((policy) => {
           return {
             ...policy.getCredentialConstraints(),
             proofOptions: {

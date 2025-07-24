@@ -1,7 +1,10 @@
 import { Constraint } from "./constraints";
-import { Cryptosuite, ProofPurpose } from "./cryptosuites";
+import {
+  CryptosuiteAlgorithm,
+  CryptosuiteType,
+  ProofPurpose,
+} from "./cryptosuites";
 import { CredentialPolicy, PolicyResult } from "./policy";
-import { SchemaValidator } from "./schema-validator";
 import { Format, VerifiableCredential, VerifiablePresentation } from "./vc-vp";
 
 /**
@@ -24,12 +27,13 @@ export interface VerificationResult {
 }
 
 export interface CredentialVerifierRequestOptions {
-  policies?: CredentialPolicy[]; // Policies that are used to verify the VP. Based on the policies, the requested credentials will be created in the presentation request.
+  policies?: (CredentialPolicy | (new () => CredentialPolicy))[]; // Policies that are used to verify the VP. Based on the policies, the requested credentials will be created in the presentation request.
+  idGenerator?: () => Promise<string> | string; // This function will be called to generate a unique ID for the request
   proofOptions: {
     purpose: ProofPurpose; // Expected purpose of the VP proof
     domain?: string; // Expected domain of the VP
     challengeGenerator?: () => Promise<string> | string; // This function will be called to generate a challenge value for the VP proof
-    type: Cryptosuite[]; // Types of the proofs that are accepted for that VP
+    type: CryptosuiteType[]; // Types of the proofs that are accepted for that VP
   };
 }
 export interface CredentialVerifierPresentationRequest {
@@ -41,14 +45,15 @@ export interface CredentialVerifierPresentationRequest {
     format?: Format; // Format of the credential e.g. "jwt" or "ldp"
     proofOptions: {
       purpose: ProofPurpose; // Expected purpose of the VC proof
-      type: Cryptosuite[]; // Types of the proofs that are accepted for that VC
+      type: CryptosuiteType[]; // Types of the proofs that are accepted for that VC
     }; // Same options as for the VP proof except challenge and domain
   }[];
   proofOptions: {
     purpose: ProofPurpose; // Expected purpose of the VP proof
     domain?: string; // Expected domain of the VP
     challenge?: string; // Challenge value used in VP proof
-    type: Cryptosuite[]; // Types of the proofs that are accepted for that VP
+    type: CryptosuiteType[]; // Types of the proofs that are accepted for that VP
+    algorithm?: CryptosuiteAlgorithm; // Algorithm of the proof
   };
 }
 
@@ -59,9 +64,8 @@ export interface ProofVerifier {
 export interface CredentialVerifierOptions {
   didResolver: DidResolver;
   logger: Logger;
-  schemaValidator: SchemaValidator;
   cryptosuites: {
-    [key in Cryptosuite]: ProofVerifier;
+    [key in CryptosuiteType | CryptosuiteAlgorithm]: ProofVerifier;
   };
 }
 
@@ -95,16 +99,4 @@ export interface Logger {
   info(...args: any[]): void;
   warn(...args: any[]): void;
   error(...args: any[]): void;
-}
-
-export interface PresentationRequest {
-  id: string;
-  comment?: string;
-  policies?: string[];
-  request_credentials: {
-    type: string;
-    required?: boolean;
-    constraints?: any;
-  }[];
-  challenge: string;
 }

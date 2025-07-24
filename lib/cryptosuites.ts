@@ -15,4 +15,5 @@ export type ECDSACryptosuite =
   | "ecdsa-jcs-2019"
   | "ecdsa-sd-2023";
 
-export type Cryptosuite = EdDSACryptosuite | ECDSACryptosuite;
+export type CryptosuiteType = EdDSACryptosuite | ECDSACryptosuite;
+export type CryptosuiteAlgorithm = "ES256K" | "EdDSA" | "ES384";
