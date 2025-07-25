@@ -1,8 +1,15 @@
 import { createVerifier } from ".";
-import { CredentialConstraints, CredentialPolicy } from "./policy";
+import {
+  CredentialConstraints,
+  CredentialPolicy,
+  PolicyResult,
+  VerificationData,
+} from "./policy";
 import { VerifiablePresentation } from "./vc-vp";
 
 class DriversLicenseCredentialSchemaPolicy implements CredentialPolicy {
+  _NAME = "DriversLicenseCredentialSchemaPolicy";
+
   getCredentialConstraints(): CredentialConstraints {
     return {
       type: "DriversLicense",
@@ -11,9 +18,17 @@ class DriversLicenseCredentialSchemaPolicy implements CredentialPolicy {
       },
     };
   }
+
+  execute(verificationData: VerificationData): PolicyResult {
+    return {
+      compliant: true,
+    };
+  }
 }
 
 class IsOver18Policy implements CredentialPolicy {
+  _NAME = "IsOver18Policy";
+
   getCredentialConstraints(): CredentialConstraints {
     return {
       type: "DriversLicense",
@@ -29,6 +44,12 @@ class IsOver18Policy implements CredentialPolicy {
       format: "jwt-vc",
     };
   }
+
+  execute(verificationData: VerificationData): PolicyResult {
+    return {
+      compliant: true,
+    };
+  }
 }
 
 async function main() {
@@ -40,6 +61,13 @@ async function main() {
         verify: () => Promise.resolve(true),
       },
     } as any,
+    presentationHandler: () =>
+      Promise.resolve({
+        credentialSubject: {
+          id: "did:example:123",
+        },
+        credentialType: ["DriversLicense"],
+      }),
   });
 
   const presentationRequest = verifier.createRequest({

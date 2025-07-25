@@ -1,9 +1,6 @@
 import { Constraint } from "./constraints";
-import {
-  CryptosuiteAlgorithm,
-  CryptosuiteType,
-  ProofPurpose,
-} from "./cryptosuites";
+import { CryptosuiteType, ProofPurpose } from "./cryptosuites";
+import { CredentialHandler } from "./handlers";
 import { CredentialPolicy, PolicyResult } from "./policy";
 import { Format, VerifiableCredential, VerifiablePresentation } from "./vc-vp";
 
@@ -12,7 +9,7 @@ import { Format, VerifiableCredential, VerifiablePresentation } from "./vc-vp";
  */
 export interface VerificationResult {
   verified: boolean;
-  credentials: VerifiableCredential[];
+  credentials: (VerifiableCredential | string | ArrayBuffer)[];
   policyResults?: Record<string, PolicyResult>;
   errors?: {
     type: string;
@@ -53,7 +50,6 @@ export interface CredentialVerifierPresentationRequest {
     domain?: string; // Expected domain of the VP
     challenge?: string; // Challenge value used in VP proof
     type: CryptosuiteType[]; // Types of the proofs that are accepted for that VP
-    algorithm?: CryptosuiteAlgorithm; // Algorithm of the proof
   };
 }
 
@@ -65,8 +61,14 @@ export interface CredentialVerifierOptions {
   didResolver: DidResolver;
   logger: Logger;
   cryptosuites: {
-    [key in CryptosuiteType | CryptosuiteAlgorithm]: ProofVerifier;
+    [key: CryptosuiteType]: ProofVerifier;
   };
+}
+
+export type VerificationInput = VerifiablePresentation | string | ArrayBuffer;
+
+export interface CredentialVerifierOptions {
+  presentationHandler: CredentialHandler;
 }
 
 /**
@@ -78,8 +80,9 @@ export interface CredentialVerifier {
   ): CredentialVerifierPresentationRequest;
 
   verify(
-    presentation: VerifiablePresentation,
-    presentationRequest: CredentialVerifierPresentationRequest
+    presentation: VerificationInput,
+    presentationRequest: CredentialVerifierPresentationRequest,
+    options?: CredentialVerifierOptions
   ): Promise<VerificationResult>;
 }
 

@@ -25,8 +25,14 @@ export interface VerificationData {
  * Interface for a policy module that evaluates business rules after cryptographic verification.
  */
 export interface CredentialPolicy {
+  _NAME: string;
   getCredentialConstraints(): CredentialConstraints;
+  execute(verificationData: VerificationData): PolicyResult;
 }
+
+export type CredentialPolicyConstructor = new () => CredentialPolicy & {
+  _NAME: string;
+};
 
 /**
  * Represents the result of a policy execution.

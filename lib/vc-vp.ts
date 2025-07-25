@@ -62,5 +62,5 @@ export type Format =
   | "sd-jwt"
   | "mso-mdoc"
   | "dc+sd-jwt"
-  | "ac_vc"
-  | "ac_vp";
+  | "ac-vc"
+  | "ac-vp";
