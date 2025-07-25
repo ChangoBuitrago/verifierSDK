@@ -61,13 +61,6 @@ async function main() {
         verify: () => Promise.resolve(true),
       },
     } as any,
-    presentationHandler: () =>
-      Promise.resolve({
-        credentialSubject: {
-          id: "did:example:123",
-        },
-        credentialType: ["DriversLicense"],
-      }),
   });
 
   const presentationRequest = verifier.createRequest({
@@ -98,6 +91,18 @@ async function main() {
 
   const verificationResult = await verifier.verify(
     receivedPresentation,
-    presentationRequest
+    presentationRequest,
+    {
+      policies: [DriversLicenseCredentialSchemaPolicy, new IsOver18Policy()],
+      presentationHandler: () =>
+        Promise.resolve({
+          credentialSubject: {
+            id: "did:example:123",
+          },
+          credentialType: ["DriversLicense"],
+          issuer: "did:example:123",
+          holder: "did:example:123",
+        }),
+    }
   );
 }

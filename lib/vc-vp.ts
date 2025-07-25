@@ -52,15 +52,4 @@ export interface VerifiablePresentation {
   proof: Proof;
 }
 
-export type Format =
-  | "jwt"
-  | "jwt-vc"
-  | "jwt-vp"
-  | "ldp-vc"
-  | "ldp-vp"
-  | "ldp"
-  | "sd-jwt"
-  | "mso-mdoc"
-  | "dc+sd-jwt"
-  | "ac-vc"
-  | "ac-vp";
+export type Format = string;

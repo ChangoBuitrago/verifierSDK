@@ -4,6 +4,7 @@ import {
   CredentialVerifierPresentationRequest,
   CredentialVerifierRequestOptions,
   VerificationResult,
+  VerifyOptions,
 } from "./interfaces";
 import { VerifiablePresentation } from "./vc-vp";
 
@@ -37,7 +38,8 @@ export class Verifier implements CredentialVerifier {
 
   async verify(
     presentation: VerifiablePresentation,
-    presentationRequest: CredentialVerifierPresentationRequest
+    presentationRequest: CredentialVerifierPresentationRequest,
+    options?: VerifyOptions
   ): Promise<VerificationResult> {
     // Based on the presentation request, the verifier will know what credentials to verify and what policies to use
     return {

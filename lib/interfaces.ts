@@ -2,7 +2,7 @@ import { Constraint } from "./constraints";
 import { CryptosuiteType, ProofPurpose } from "./cryptosuites";
 import { CredentialHandler } from "./handlers";
 import { CredentialPolicy, PolicyResult } from "./policy";
-import { Format, VerifiableCredential, VerifiablePresentation } from "./vc-vp";
+import { Format, VerifiableCredential } from "./vc-vp";
 
 /**
  * Represents the result of a verification process.
@@ -65,10 +65,11 @@ export interface CredentialVerifierOptions {
   };
 }
 
-export type VerificationInput = VerifiablePresentation | string | ArrayBuffer;
+export type VerificationInput = object | string | ArrayBuffer;
 
-export interface CredentialVerifierOptions {
+export interface VerifyOptions {
   presentationHandler: CredentialHandler;
+  policies?: (CredentialPolicy | (new () => CredentialPolicy))[];
 }
 
 /**
@@ -82,7 +83,7 @@ export interface CredentialVerifier {
   verify(
     presentation: VerificationInput,
     presentationRequest: CredentialVerifierPresentationRequest,
-    options?: CredentialVerifierOptions
+    options?: VerifyOptions
   ): Promise<VerificationResult>;
 }
 

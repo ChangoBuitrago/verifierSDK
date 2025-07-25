@@ -1,10 +1,9 @@
-import { Constraint } from "./constraints";
 import { CredentialSubject, Format } from "./vc-vp";
 
 export interface CredentialConstraints {
   type: string; // Type of the credential e.g. "VerifiableCredential"
   required?: boolean; // Whether the credential is required inside the VP
-  constraints?: { [key: string]: Constraint }; // Constraints for the credential subject
+  constraints?: JSONSchema; // Constraints for the credential subject
   schema?: { uri: string }; // Schema of the credential e.g. "https://example.com/schemas/age_credential.json"
   format?: Format; // Format of the credential e.g. "jwt" or "ldp"
   issuer?: string[]; // Issuer of the credential e.g. "did:example:123"
